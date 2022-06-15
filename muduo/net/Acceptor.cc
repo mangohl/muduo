@@ -24,17 +24,17 @@ using namespace muduo::net;
 
 Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reuseport)
   : loop_(loop),
-    acceptSocket_(sockets::createNonblockingOrDie(listenAddr.family())),
-    acceptChannel_(loop, acceptSocket_.fd()),
+    acceptSocket_(sockets::createNonblockingOrDie(listenAddr.family())),//创建socket
+    acceptChannel_(loop, acceptSocket_.fd()),//创建了socket,就可以创建channel了
     listening_(false),
-    idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
+    idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))//tip?
 {
   assert(idleFd_ >= 0);
-  acceptSocket_.setReuseAddr(true);
-  acceptSocket_.setReusePort(reuseport);
-  acceptSocket_.bindAddress(listenAddr);
-  acceptChannel_.setReadCallback(
-      std::bind(&Acceptor::handleRead, this));
+  acceptSocket_.setReuseAddr(true);//tip
+  acceptSocket_.setReusePort(reuseport);//tip
+  acceptSocket_.bindAddress(listenAddr);//绑定地址和端口号
+  acceptChannel_.setReadCallback(//绑定可读事件回调函数，即新连接请求到来后的处理函数
+      std::bind(&Acceptor::handleRead, this));//tip std::bind
 }
 
 Acceptor::~Acceptor()
@@ -48,8 +48,8 @@ void Acceptor::listen()
 {
   loop_->assertInLoopThread();
   listening_ = true;
-  acceptSocket_.listen();
-  acceptChannel_.enableReading();
+  acceptSocket_.listen();//开始监听端口
+  acceptChannel_.enableReading();//开启对该通道的可读事件的监听
 }
 
 void Acceptor::handleRead()
@@ -57,7 +57,7 @@ void Acceptor::handleRead()
   loop_->assertInLoopThread();
   InetAddress peerAddr;
   //FIXME loop until no more
-  int connfd = acceptSocket_.accept(&peerAddr);
+  int connfd = acceptSocket_.accept(&peerAddr);//创建建立连接后的fd
   if (connfd >= 0)
   {
     // string hostport = peerAddr.toIpPort();
@@ -68,7 +68,7 @@ void Acceptor::handleRead()
     }
     else
     {
-      sockets::close(connfd);
+      sockets::close(connfd);//将连接后的connfd关闭？即没有注册连接回调的话，默认就关闭这个connfd
     }
   }
   else

@@ -30,6 +30,7 @@ class EventLoop;
 /// This class doesn't own the file descriptor.
 /// The file descriptor could be a socket,
 /// an eventfd, a timerfd, or a signalfd
+/// 对I/O通道的封装:设置各种回调事件
 class Channel : noncopyable
 {
  public:
@@ -97,7 +98,7 @@ class Channel : noncopyable
   int        index_; // used by Poller.
   bool       logHup_;
 
-  std::weak_ptr<void> tie_;
+  std::weak_ptr<void> tie_;//tip
   bool tied_;
   bool eventHandling_;
   bool addedToLoop_;

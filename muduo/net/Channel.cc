@@ -44,18 +44,21 @@ Channel::~Channel()
   }
 }
 
+//这是干嘛用的？
 void Channel::tie(const std::shared_ptr<void>& obj)
 {
   tie_ = obj;
   tied_ = true;
 }
 
+//更新channel,若使用epoll，则使用::epoll_ctl来新增、修改fd_对应的事件
 void Channel::update()
 {
   addedToLoop_ = true;
   loop_->updateChannel(this);
 }
 
+//从事件循环中删除该通道
 void Channel::remove()
 {
   assert(isNoneEvent());
@@ -63,6 +66,7 @@ void Channel::remove()
   loop_->removeChannel(this);
 }
 
+//事件处理入口函数
 void Channel::handleEvent(Timestamp receiveTime)
 {
   std::shared_ptr<void> guard;
@@ -80,6 +84,8 @@ void Channel::handleEvent(Timestamp receiveTime)
   }
 }
 
+//区分revents_的类型，调用不同的回调函数
+//这里的POLLHUP等只有1bit为1,其他都是0
 void Channel::handleEventWithGuard(Timestamp receiveTime)
 {
   eventHandling_ = true;
@@ -123,6 +129,7 @@ string Channel::eventsToString() const
   return eventsToString(fd_, events_);
 }
 
+//将描述符号上的事件，转化为字符串形式
 string Channel::eventsToString(int fd, int ev)
 {
   std::ostringstream oss;
