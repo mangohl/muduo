@@ -242,6 +242,7 @@ void sockets::fromIpPort(const char* ip, uint16_t port,
   }
 }
 
+//由ip地址和端口号构造sockaddr_in6
 void sockets::fromIpPort(const char* ip, uint16_t port,
                          struct sockaddr_in6* addr)
 {

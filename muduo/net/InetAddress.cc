@@ -102,6 +102,7 @@ string InetAddress::toIp() const
   return buf;
 }
 
+//以网络字节序返回ip地址
 uint32_t InetAddress::ipv4NetEndian() const
 {
   assert(family() == AF_INET);
@@ -115,6 +116,7 @@ uint16_t InetAddress::port() const
 
 static __thread char t_resolveBuffer[64 * 1024];
 
+//根据主机名解析出ip地址
 bool InetAddress::resolve(StringArg hostname, InetAddress* out)
 {
   assert(out != NULL);
@@ -140,6 +142,7 @@ bool InetAddress::resolve(StringArg hostname, InetAddress* out)
   }
 }
 
+//这个字段的含义？
 void InetAddress::setScopeId(uint32_t scope_id)
 {
   if (family() == AF_INET6)

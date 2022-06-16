@@ -50,7 +50,7 @@ class InetAddress : public muduo::copyable
     : addr6_(addr)
   { }
 
-  sa_family_t family() const { return addr_.sin_family; }
+  sa_family_t family() const { return addr_.sin_family; }//只返回ipv4的？union共用一块内存，这里只返回addr6_也可
   string toIp() const;
   string toIpPort() const;
   uint16_t port() const;
@@ -73,10 +73,10 @@ class InetAddress : public muduo::copyable
   void setScopeId(uint32_t scope_id);
 
  private:
-  union
+  union//tip 默认的构造/拷贝构造函数会如何处理？
   {
-    struct sockaddr_in addr_;
-    struct sockaddr_in6 addr6_;
+    struct sockaddr_in addr_;//ipv4地址对象
+    struct sockaddr_in6 addr6_;//ipv6地址对象
   };
 };
 
