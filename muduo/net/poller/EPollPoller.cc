@@ -38,8 +38,8 @@ const int kDeleted = 2;
 
 EPollPoller::EPollPoller(EventLoop* loop)
   : Poller(loop),
-    epollfd_(::epoll_create1(EPOLL_CLOEXEC)),
-    events_(kInitEventListSize)
+    epollfd_(::epoll_create1(EPOLL_CLOEXEC)),//创建epoll对象
+    events_(kInitEventListSize)//初始化事件vector
 {
   if (epollfd_ < 0)
   {
@@ -51,23 +51,24 @@ EPollPoller::~EPollPoller()
 {
   ::close(epollfd_);
 }
-
+//轮询一次
 Timestamp EPollPoller::poll(int timeoutMs, ChannelList* activeChannels)
 {
   LOG_TRACE << "fd total count " << channels_.size();
   int numEvents = ::epoll_wait(epollfd_,
                                &*events_.begin(),
                                static_cast<int>(events_.size()),
-                               timeoutMs);
+                               timeoutMs);//拉取epoll对象中就绪的事件，存放在events_中，返回就绪事件的个数
   int savedErrno = errno;
   Timestamp now(Timestamp::now());
   if (numEvents > 0)
   {
     LOG_TRACE << numEvents << " events happened";
-    fillActiveChannels(numEvents, activeChannels);
-    if (implicit_cast<size_t>(numEvents) == events_.size())
+    fillActiveChannels(numEvents, activeChannels);//根据就绪的事件，填充activeChannels
+    if (implicit_cast<size_t>(numEvents) == events_.size())//implicit_cast?
     {
-      events_.resize(events_.size()*2);
+      events_.resize(events_.size()*2);//当拉取的就绪时间大小刚好等于预设的大小，可能有就绪的事件这次没有获取到，
+                                       //故重新设置events_的大小
     }
   }
   else if (numEvents == 0)
@@ -99,7 +100,7 @@ void EPollPoller::fillActiveChannels(int numEvents,
     assert(it != channels_.end());
     assert(it->second == channel);
 #endif
-    channel->set_revents(events_[i].events);
+    channel->set_revents(events_[i].events);//设置通道的revents
     activeChannels->push_back(channel);
   }
 }
@@ -119,7 +120,7 @@ void EPollPoller::updateChannel(Channel* channel)
       assert(channels_.find(fd) == channels_.end());
       channels_[fd] = channel;
     }
-    else // index == kDeleted
+    else // index == kDeleted//理解为被删除过的？
     {
       assert(channels_.find(fd) != channels_.end());
       assert(channels_[fd] == channel);
@@ -155,16 +156,16 @@ void EPollPoller::removeChannel(Channel* channel)
   LOG_TRACE << "fd = " << fd;
   assert(channels_.find(fd) != channels_.end());
   assert(channels_[fd] == channel);
-  assert(channel->isNoneEvent());
+  assert(channel->isNoneEvent());//确保该通道为空事件
   int index = channel->index();
   assert(index == kAdded || index == kDeleted);
-  size_t n = channels_.erase(fd);
-  (void)n;
+  size_t n = channels_.erase(fd);//从map中删除channeL
+  (void)n;//?
   assert(n == 1);
 
   if (index == kAdded)
   {
-    update(EPOLL_CTL_DEL, channel);
+    update(EPOLL_CTL_DEL, channel);//从epoll对象中删除channel
   }
   channel->set_index(kNew);
 }
@@ -178,7 +179,7 @@ void EPollPoller::update(int operation, Channel* channel)
   int fd = channel->fd();
   LOG_TRACE << "epoll_ctl op = " << operationToString(operation)
     << " fd = " << fd << " event = { " << channel->eventsToString() << " }";
-  if (::epoll_ctl(epollfd_, operation, fd, &event) < 0)
+  if (::epoll_ctl(epollfd_, operation, fd, &event) < 0)//修改epoll对象中fd对应的事件
   {
     if (operation == EPOLL_CTL_DEL)
     {

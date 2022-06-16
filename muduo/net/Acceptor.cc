@@ -49,7 +49,7 @@ void Acceptor::listen()
   loop_->assertInLoopThread();
   listening_ = true;
   acceptSocket_.listen();//开始监听端口
-  acceptChannel_.enableReading();//开启对该通道的可读事件的监听
+  acceptChannel_.enableReading();//开启对该通道的可读事件的监听,当有连接后，调用handleRead回调
 }
 
 void Acceptor::handleRead()

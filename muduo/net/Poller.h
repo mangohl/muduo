@@ -28,6 +28,7 @@ class Channel;
 /// Base class for IO Multiplexing
 ///
 /// This class doesn't own the Channel objects.
+/// 轮询器基类，定义对I/O通道的相关接口
 class Poller : noncopyable
 {
  public:
@@ -58,7 +59,7 @@ class Poller : noncopyable
   }
 
  protected:
-  typedef std::map<int, Channel*> ChannelMap;
+  typedef std::map<int, Channel*> ChannelMap;//int 为socketfd
   ChannelMap channels_;
 
  private:

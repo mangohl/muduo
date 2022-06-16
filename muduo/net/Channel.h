@@ -30,7 +30,8 @@ class EventLoop;
 /// This class doesn't own the file descriptor.
 /// The file descriptor could be a socket,
 /// an eventfd, a timerfd, or a signalfd
-/// 对I/O通道的封装:设置各种回调事件
+/// 对I/O通道(事件)的封装:设置各种回调事件；主要为了设置struct epoll_event中的成员data.ptr
+/// epoll内部是事件，channel是对外的
 class Channel : noncopyable
 {
  public:
@@ -87,14 +88,14 @@ class Channel : noncopyable
   void update();
   void handleEventWithGuard(Timestamp receiveTime);
 
-  static const int kNoneEvent;
+  static const int kNoneEvent;//空事件，代表该通道没有事件
   static const int kReadEvent;
   static const int kWriteEvent;
 
   EventLoop* loop_;
   const int  fd_;
-  int        events_;
-  int        revents_; // it's the received event types of epoll or poll
+  int        events_;//
+  int        revents_; // it's the received event types of epoll or poll;epoll或者poll就绪返回时的事件
   int        index_; // used by Poller.
   bool       logHup_;
 

@@ -27,6 +27,7 @@ class InetAddress;
 ///
 /// Acceptor of incoming TCP connections.
 ///
+//主要完成socket，bind,listen,和设置连接建立后的回调
 class Acceptor : noncopyable
 {
  public:
