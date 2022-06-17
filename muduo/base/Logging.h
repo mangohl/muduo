@@ -14,6 +14,7 @@ namespace muduo
 
 class TimeZone;
 
+//析构时输出到流
 class Logger
 {
  public:
@@ -29,11 +30,12 @@ class Logger
   };
 
   // compile time calculation of basename of source file
+  //提取文件路径中的文件名
   class SourceFile
   {
    public:
     template<int N>
-    SourceFile(const char (&arr)[N])
+    SourceFile(const char (&arr)[N])//tip
       : data_(arr),
         size_(N-1)
     {
@@ -48,7 +50,7 @@ class Logger
     explicit SourceFile(const char* filename)
       : data_(filename)
     {
-      const char* slash = strrchr(filename, '/');
+      const char* slash = strrchr(filename, '/');//在filename中找到最后一个'/'所在的位置
       if (slash)
       {
         data_ = slash + 1;
@@ -56,7 +58,7 @@ class Logger
       size_ = static_cast<int>(strlen(data_));
     }
 
-    const char* data_;
+    const char* data_;//不拥有那块内存
     int size_;
   };
 

@@ -51,14 +51,14 @@ class ThreadPool : noncopyable
   void runInThread();
   Task take();
 
-  mutable MutexLock mutex_;
-  Condition notEmpty_ GUARDED_BY(mutex_);
-  Condition notFull_ GUARDED_BY(mutex_);
-  string name_;
+  mutable MutexLock mutex_;//互斥锁
+  Condition notEmpty_ GUARDED_BY(mutex_);//非空条件变量
+  Condition notFull_ GUARDED_BY(mutex_);// 不满条件变量
+  string name_;//线程池名称
   Task threadInitCallback_;
-  std::vector<std::unique_ptr<muduo::Thread>> threads_;
+  std::vector<std::unique_ptr<muduo::Thread>> threads_;//unique_ptr,why?
   std::deque<Task> queue_ GUARDED_BY(mutex_);
-  size_t maxQueueSize_;
+  size_t maxQueueSize_;//最大任务数量
   bool running_;
 };
 

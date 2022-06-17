@@ -142,7 +142,7 @@ AtomicInt32 Thread::numCreated_;
 Thread::Thread(ThreadFunc func, const string& n)
   : started_(false),
     joined_(false),
-    pthreadId_(0),
+    pthreadId_(0),//thread id 都初始为0
     tid_(0),
     func_(std::move(func)),
     name_(n),

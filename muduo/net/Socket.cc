@@ -37,6 +37,7 @@ bool Socket::getTcpInfoString(char* buf, int len) const
   bool ok = getTcpInfo(&tcpi);
   if (ok)
   {
+      //tip
     snprintf(buf, len, "unrecovered=%u "
              "rto=%u ato=%u snd_mss=%u rcv_mss=%u "
              "lost=%u retrans=%u rtt=%u rttvar=%u "
@@ -59,7 +60,7 @@ bool Socket::getTcpInfoString(char* buf, int len) const
 
 void Socket::bindAddress(const InetAddress& addr)
 {
-  sockets::bindOrDie(sockfd_, addr.getSockAddr());
+  sockets::bindOrDie(sockfd_, addr.getSockAddr());//没有绑定成功则退出?
 }
 
 void Socket::listen()
@@ -69,7 +70,7 @@ void Socket::listen()
 
 int Socket::accept(InetAddress* peeraddr)
 {
-  struct sockaddr_in6 addr;
+  struct sockaddr_in6 addr;//为什么使用是sockaddr_in6，ipv4的话该函数也能正确处理吗？
   memZero(&addr, sizeof addr);
   int connfd = sockets::accept(sockfd_, &addr);
   if (connfd >= 0)
@@ -79,11 +80,13 @@ int Socket::accept(InetAddress* peeraddr)
   return connfd;
 }
 
+//使得该socket不能再发送数据
 void Socket::shutdownWrite()
 {
   sockets::shutdownWrite(sockfd_);
 }
 
+//有什么用？
 void Socket::setTcpNoDelay(bool on)
 {
   int optval = on ? 1 : 0;
@@ -92,6 +95,7 @@ void Socket::setTcpNoDelay(bool on)
   // FIXME CHECK
 }
 
+//有什么用？
 void Socket::setReuseAddr(bool on)
 {
   int optval = on ? 1 : 0;

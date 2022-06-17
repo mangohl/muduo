@@ -30,12 +30,13 @@ ThreadPool::~ThreadPool()
   }
 }
 
+//start时确定了线程的数量
 void ThreadPool::start(int numThreads)
 {
   assert(threads_.empty());
   running_ = true;
   threads_.reserve(numThreads);
-  for (int i = 0; i < numThreads; ++i)
+  for (int i = 0; i < numThreads; ++i)//初始化numThreads个线程，它们的线程执行函数都为ThreadPool::runInThread
   {
     char id[32];
     snprintf(id, sizeof id, "%d", i+1);
@@ -59,7 +60,7 @@ void ThreadPool::stop()
   }
   for (auto& thr : threads_)
   {
-    thr->join();
+    thr->join();//tip join
   }
 }
 
@@ -69,6 +70,7 @@ size_t ThreadPool::queueSize() const
   return queue_.size();
 }
 
+//主要功能是将task append队列尾
 void ThreadPool::run(Task task)
 {
   if (threads_.empty())
@@ -90,6 +92,7 @@ void ThreadPool::run(Task task)
   }
 }
 
+//从队列中取出一个task
 ThreadPool::Task ThreadPool::take()
 {
   MutexLockGuard lock(mutex_);
@@ -117,6 +120,8 @@ bool ThreadPool::isFull() const
   return maxQueueSize_ > 0 && queue_.size() >= maxQueueSize_;
 }
 
+//线程执行函数
+//不断的弹出队头任务并执行
 void ThreadPool::runInThread()
 {
   try

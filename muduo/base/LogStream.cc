@@ -44,7 +44,7 @@ static_assert(sizeof digitsHex == 17, "wrong number of digitsHex");
 
 // Efficient Integer to String Conversions, by Matthew Wilson.
 template<typename T>
-size_t convert(char buf[], T value)
+size_t convert(char buf[], T value)//将整形value转换为10进制字符串，存放于buf中
 {
   T i = value;
   char* p = buf;
@@ -236,7 +236,7 @@ void LogStream::staticCheck()
 template<typename T>
 void LogStream::formatInteger(T v)
 {
-  if (buffer_.avail() >= kMaxNumericSize)
+  if (buffer_.avail() >= kMaxNumericSize)//why kMaxNumericSize
   {
     size_t len = convert(buffer_.current(), v);
     buffer_.add(len);
@@ -291,9 +291,10 @@ LogStream& LogStream::operator<<(unsigned long long v)
   return *this;
 }
 
+//将指针p以16进制字符串形式 append到buffer中
 LogStream& LogStream::operator<<(const void* p)
 {
-  uintptr_t v = reinterpret_cast<uintptr_t>(p);
+  uintptr_t v = reinterpret_cast<uintptr_t>(p);//tip 多种cast
   if (buffer_.avail() >= kMaxNumericSize)
   {
     char* buf = buffer_.current();
@@ -325,7 +326,7 @@ Fmt::Fmt(const char* fmt, T val)
   assert(static_cast<size_t>(length_) < sizeof buf_);
 }
 
-// Explicit instantiations
+// Explicit instantiations    for what?
 
 template Fmt::Fmt(const char* fmt, char);
 

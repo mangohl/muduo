@@ -194,6 +194,7 @@ Logger::Logger(SourceFile file, int line, bool toAbort)
 {
 }
 
+//析构的时候输出流
 Logger::~Logger()
 {
   impl_.finish();

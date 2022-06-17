@@ -21,6 +21,7 @@ namespace detail
 const int kSmallBuffer = 4000;
 const int kLargeBuffer = 4000*1000;
 
+//对固定大小的字符数组的封装，主要提供向数组内append数据的方法
 template<int SIZE>
 class FixedBuffer : noncopyable
 {
@@ -70,19 +71,21 @@ class FixedBuffer : noncopyable
   static void cookieStart();
   static void cookieEnd();
 
-  void (*cookie_)();
+  void (*cookie_)();//tip,for what
   char data_[SIZE];
-  char* cur_;
+  char* cur_;//指向当前第一个空闲位置
 };
 
 }  // namespace detail
 
+//对固定Buffer的封装，提供将各种类型 <<到buffer中的方法
 class LogStream : noncopyable
 {
   typedef LogStream self;
  public:
   typedef detail::FixedBuffer<detail::kSmallBuffer> Buffer;
 
+  //将v append到buffer中
   self& operator<<(bool v)
   {
     buffer_.append(v ? "1" : "0", 1);
