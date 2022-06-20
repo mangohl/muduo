@@ -25,6 +25,7 @@ namespace net
 ///
 /// IO Multiplexing with epoll(4).
 ///
+/// io多路复现，对epoll对象及相关函数的封装，比如epoll_ctl,epoll_wait
 class EPollPoller : public Poller
 {
  public:

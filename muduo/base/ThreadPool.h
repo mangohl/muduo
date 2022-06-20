@@ -17,6 +17,7 @@
 namespace muduo
 {
 
+//对多个线程，任务队列的封装
 class ThreadPool : noncopyable
 {
  public:

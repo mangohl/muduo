@@ -60,6 +60,7 @@ int readFile(StringArg filename,
 }
 
 // not thread safe
+//对文件操作的封装，主要功能是在文件尾追加内容
 class AppendFile : noncopyable
 {
  public:

@@ -16,7 +16,7 @@
 
 namespace muduo
 {
-
+//pthread_create 对pthread的封装，主要函数包括pthread_create,pthread_join等
 class Thread : noncopyable
 {
  public:
@@ -41,9 +41,9 @@ class Thread : noncopyable
 
   bool       started_;
   bool       joined_;
-  pthread_t  pthreadId_;
-  pid_t      tid_;
-  ThreadFunc func_;
+  pthread_t  pthreadId_;//线程id
+  pid_t      tid_;//进程id
+  ThreadFunc func_;//线程执行函数
   string     name_;
   CountDownLatch latch_;
 

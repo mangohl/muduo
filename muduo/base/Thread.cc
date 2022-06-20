@@ -69,7 +69,7 @@ struct ThreadData
 
   void runInThread()
   {
-    *tid_ = muduo::CurrentThread::tid();
+    *tid_ = muduo::CurrentThread::tid();//该内存由Thread管理
     tid_ = NULL;
     latch_->countDown();
     latch_ = NULL;
@@ -78,7 +78,7 @@ struct ThreadData
     ::prctl(PR_SET_NAME, muduo::CurrentThread::t_threadName);
     try
     {
-      func_();
+      func_();//调用线程执行函数
       muduo::CurrentThread::t_threadName = "finished";
     }
     catch (const Exception& ex)
@@ -109,7 +109,7 @@ void* startThread(void* obj)
 {
   ThreadData* data = static_cast<ThreadData*>(obj);
   data->runInThread();
-  delete data;
+  delete data;//释放data内存
   return NULL;
 }
 
@@ -176,7 +176,7 @@ void Thread::start()
   started_ = true;
   // FIXME: move(func_)
   detail::ThreadData* data = new detail::ThreadData(func_, name_, &tid_, &latch_);
-  if (pthread_create(&pthreadId_, NULL, &detail::startThread, data))
+  if (pthread_create(&pthreadId_, NULL, &detail::startThread, data))//创建线程，会自动调用线程执行函数
   {
     started_ = false;
     delete data; // or no delete?

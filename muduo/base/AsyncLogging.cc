@@ -16,7 +16,7 @@ AsyncLogging::AsyncLogging(const string& basename,
                            int flushInterval)
   : flushInterval_(flushInterval),
     running_(false),
-    basename_(basename),
+    basename_(basename),//文件名
     rollSize_(rollSize),
     thread_(std::bind(&AsyncLogging::threadFunc, this), "Logging"),
     latch_(1),
@@ -28,23 +28,23 @@ AsyncLogging::AsyncLogging(const string& basename,
 {
   currentBuffer_->bzero();
   nextBuffer_->bzero();
-  buffers_.reserve(16);
+  buffers_.reserve(16);//创建足够的预留空间，size没有改变
 }
 
 void AsyncLogging::append(const char* logline, int len)
 {
   muduo::MutexLockGuard lock(mutex_);
-  if (currentBuffer_->avail() > len)
+  if (currentBuffer_->avail() > len)//当前缓存足够
   {
     currentBuffer_->append(logline, len);
   }
   else
   {
-    buffers_.push_back(std::move(currentBuffer_));
+    buffers_.push_back(std::move(currentBuffer_));//tip unique_ptr + std::move
 
     if (nextBuffer_)
     {
-      currentBuffer_ = std::move(nextBuffer_);
+      currentBuffer_ = std::move(nextBuffer_);//?move之后，nextBUffer_==nullptr?
     }
     else
     {

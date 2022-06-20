@@ -93,6 +93,7 @@ inline LogStream& operator<<(LogStream& s, const Logger::SourceFile& v)
   return s;
 }
 
+//默认输出到终端
 void defaultOutput(const char* msg, int len)
 {
   size_t n = fwrite(msg, 1, len, stdout);

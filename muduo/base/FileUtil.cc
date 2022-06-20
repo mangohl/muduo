@@ -20,7 +20,7 @@ FileUtil::AppendFile::AppendFile(StringArg filename)
     writtenBytes_(0)
 {
   assert(fp_);
-  ::setbuffer(fp_, buffer_, sizeof buffer_);
+  ::setbuffer(fp_, buffer_, sizeof buffer_);//设置文件缓冲区
   // posix_fadvise POSIX_FADV_DONTNEED ?
 }
 
@@ -36,7 +36,7 @@ void FileUtil::AppendFile::append(const char* logline, const size_t len)
   while (written != len)
   {
     size_t remain = len - written;
-    size_t n = write(logline + written, remain);
+    size_t n = write(logline + written, remain);//从logline + written位置写remain个字节
     if (n != remain)
     {
       int err = ferror(fp_);
@@ -52,6 +52,7 @@ void FileUtil::AppendFile::append(const char* logline, const size_t len)
   writtenBytes_ += written;
 }
 
+//把缓冲区内容写入文件
 void FileUtil::AppendFile::flush()
 {
   ::fflush(fp_);

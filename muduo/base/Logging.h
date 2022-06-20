@@ -14,7 +14,8 @@ namespace muduo
 
 class TimeZone;
 
-//析构时输出到流
+//对LoggerStream的封装，支持设置流输出的方式，默认输出到终端
+//析构时输出到文件
 class Logger
 {
  public:
@@ -75,7 +76,7 @@ class Logger
 
   typedef void (*OutputFunc)(const char* msg, int len);
   typedef void (*FlushFunc)();
-  static void setOutput(OutputFunc);
+  static void setOutput(OutputFunc);//设置日志输出函数
   static void setFlush(FlushFunc);
   static void setTimeZone(const TimeZone& tz);
 

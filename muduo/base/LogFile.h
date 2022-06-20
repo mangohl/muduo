@@ -19,6 +19,7 @@ namespace FileUtil
 class AppendFile;
 }
 
+//支持线程安全和回滚的日志
 class LogFile : noncopyable
 {
  public:

@@ -25,9 +25,9 @@ LogFile::LogFile(const string& basename,
     checkEveryN_(checkEveryN),
     count_(0),
     mutex_(threadSafe ? new MutexLock : NULL),
-    startOfPeriod_(0),
-    lastRoll_(0),
-    lastFlush_(0)
+    startOfPeriod_(0),//why ?
+    lastRoll_(0),//上次回滚的时间
+    lastFlush_(0)//上次flush的时间
 {
   assert(basename.find('/') == string::npos);
   rollFile();
@@ -61,27 +61,28 @@ void LogFile::flush()
   }
 }
 
+//向文件尾追加内容
 void LogFile::append_unlocked(const char* logline, int len)
 {
   file_->append(logline, len);
 
-  if (file_->writtenBytes() > rollSize_)
+  if (file_->writtenBytes() > rollSize_)//文件写入的字节>rollSize_
   {
     rollFile();
   }
   else
   {
     ++count_;
-    if (count_ >= checkEveryN_)
+    if (count_ >= checkEveryN_)//append被调用的次数>checkEveryN_
     {
       count_ = 0;
       time_t now = ::time(NULL);
       time_t thisPeriod_ = now / kRollPerSeconds_ * kRollPerSeconds_;
-      if (thisPeriod_ != startOfPeriod_)
+      if (thisPeriod_ != startOfPeriod_)//当前时间所处的周期 != 开始周期
       {
         rollFile();
       }
-      else if (now - lastFlush_ > flushInterval_)
+      else if (now - lastFlush_ > flushInterval_)//两次flush的间隔>flush间隔
       {
         lastFlush_ = now;
         file_->flush();
@@ -90,18 +91,19 @@ void LogFile::append_unlocked(const char* logline, int len)
   }
 }
 
+//回滚文件:将旧文件关闭，新建新文件；旧文件缓存区的内容会被写入吗?
 bool LogFile::rollFile()
 {
   time_t now = 0;
-  string filename = getLogFileName(basename_, &now);
-  time_t start = now / kRollPerSeconds_ * kRollPerSeconds_;
+  string filename = getLogFileName(basename_, &now);//获取新的文件名和当前时间
+  time_t start = now / kRollPerSeconds_ * kRollPerSeconds_;//why?
 
   if (now > lastRoll_)
   {
     lastRoll_ = now;
     lastFlush_ = now;
     startOfPeriod_ = start;
-    file_.reset(new FileUtil::AppendFile(filename));
+    file_.reset(new FileUtil::AppendFile(filename));// unique_ptr reset tip
     return true;
   }
   return false;

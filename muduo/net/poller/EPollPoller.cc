@@ -170,6 +170,7 @@ void EPollPoller::removeChannel(Channel* channel)
   channel->set_index(kNew);
 }
 
+//更新通道，实质是更新epoll管理的fd对应的事件
 void EPollPoller::update(int operation, Channel* channel)
 {
   struct epoll_event event;
