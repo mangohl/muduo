@@ -32,6 +32,7 @@ class InetAddress;
 /// It closes the sockfd when desctructs.
 /// It's thread safe, all operations are delagated to OS.
 /// 封装了socket fd,并提供了对其常用的操作函数，比如：bind,listen,accept等
+//用对象来管理文件描述符，符合RAII,对象的生命期和描述符的生命期绑定，也能防止串话
 class Socket : noncopyable
 {
  public:

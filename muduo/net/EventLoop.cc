@@ -67,11 +67,11 @@ EventLoop::EventLoop()
     eventHandling_(false),
     callingPendingFunctors_(false),
     iteration_(0),
-    threadId_(CurrentThread::tid()),
-    poller_(Poller::newDefaultPoller(this)),
+    threadId_(CurrentThread::tid()),//当前线程id
+    poller_(Poller::newDefaultPoller(this)),//创建轮询器对象
     timerQueue_(new TimerQueue(this)),
-    wakeupFd_(createEventfd()),
-    wakeupChannel_(new Channel(this, wakeupFd_)),
+    wakeupFd_(createEventfd()),//创建唤醒事件
+    wakeupChannel_(new Channel(this, wakeupFd_)),//创建唤醒通道
     currentActiveChannel_(NULL)
 {
   LOG_DEBUG << "EventLoop created " << this << " in thread " << threadId_;
@@ -100,6 +100,7 @@ EventLoop::~EventLoop()
   t_loopInThisThread = NULL;
 }
 
+//先处理完事件，再处理队列中的函数
 void EventLoop::loop()
 {
   assert(!looping_);
@@ -111,7 +112,7 @@ void EventLoop::loop()
   while (!quit_)
   {
     activeChannels_.clear();
-    pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
+    pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);//获取就绪通道
     ++iteration_;
     if (Logger::logLevel() <= Logger::TRACE)
     {
@@ -119,7 +120,7 @@ void EventLoop::loop()
     }
     // TODO sort channel by priority
     eventHandling_ = true;
-    for (Channel* channel : activeChannels_)
+    for (Channel* channel : activeChannels_)//依次处理通道事件
     {
       currentActiveChannel_ = channel;
       currentActiveChannel_->handleEvent(pollReturnTime_);
@@ -201,7 +202,7 @@ void EventLoop::cancel(TimerId timerId)
 void EventLoop::updateChannel(Channel* channel)
 {
   assert(channel->ownerLoop() == this);
-  assertInLoopThread();
+  assertInLoopThread();//如果调用该函数的线程和loop不在一个线程，直接fatal
   poller_->updateChannel(channel);
 }
 
@@ -231,6 +232,8 @@ void EventLoop::abortNotInLoopThread()
             << ", current thread id = " <<  CurrentThread::tid();
 }
 
+//向wakeupFd_写入1,wakeupChannel的可读事件就会就绪了，但有什么用呢?
+//poll一次可能会阻塞kPollTimeMs的时间，当该函数被调用后，poll就会立即返回，所以叫做唤醒?
 void EventLoop::wakeup()
 {
   uint64_t one = 1;

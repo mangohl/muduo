@@ -51,7 +51,7 @@ EPollPoller::~EPollPoller()
 {
   ::close(epollfd_);
 }
-//轮询一次
+//轮询一次：获取有就绪事件的通道
 Timestamp EPollPoller::poll(int timeoutMs, ChannelList* activeChannels)
 {
   LOG_TRACE << "fd total count " << channels_.size();
@@ -67,7 +67,7 @@ Timestamp EPollPoller::poll(int timeoutMs, ChannelList* activeChannels)
     fillActiveChannels(numEvents, activeChannels);//根据就绪的事件，填充activeChannels
     if (implicit_cast<size_t>(numEvents) == events_.size())//implicit_cast?
     {
-      events_.resize(events_.size()*2);//当拉取的就绪时间大小刚好等于预设的大小，可能有就绪的事件这次没有获取到，
+      events_.resize(events_.size()*2);//当拉取的就绪事件大小刚好等于预设的大小，可能有就绪的事件这次没有获取到，
                                        //故重新设置events_的大小
     }
   }
