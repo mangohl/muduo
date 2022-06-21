@@ -16,7 +16,7 @@ using namespace muduo::net;
 
 Poller* Poller::newDefaultPoller(EventLoop* loop)
 {
-  if (::getenv("MUDUO_USE_POLL"))
+  if (::getenv("MUDUO_USE_POLL"))//获取环境变量值
   {
     return new PollPoller(loop);
   }
