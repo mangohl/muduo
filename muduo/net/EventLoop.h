@@ -36,6 +36,7 @@ class TimerQueue;
 /// Reactor, at most one per thread.
 ///
 /// This is an interface class, so don't expose too much details.
+//事件循环：主要作用循环获取就绪事件
 class EventLoop : noncopyable
 {
  public:
@@ -113,6 +114,7 @@ class EventLoop : noncopyable
       abortNotInLoopThread();
     }
   }
+  //实例化EventLoop时的线程 == 调用该函数时所在的线程
   bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
   // bool callingPendingFunctors() const { return callingPendingFunctors_; }
   bool eventHandling() const { return eventHandling_; }

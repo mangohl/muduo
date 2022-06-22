@@ -22,7 +22,7 @@ namespace muduo
 {
 namespace detail
 {
-
+//该方法获得的线程id在不同的进程中也是唯一的
 pid_t gettid()
 {
   return static_cast<pid_t>(::syscall(SYS_gettid));

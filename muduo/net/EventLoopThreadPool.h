@@ -27,6 +27,7 @@ namespace net
 class EventLoop;
 class EventLoopThread;
 
+//多个事件循环线程
 class EventLoopThreadPool : noncopyable
 {
  public:

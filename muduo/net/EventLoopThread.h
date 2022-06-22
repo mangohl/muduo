@@ -21,7 +21,7 @@ namespace net
 {
 
 class EventLoop;
-
+//事件循环线程，在线程里执行事件循环
 class EventLoopThread : noncopyable
 {
  public:

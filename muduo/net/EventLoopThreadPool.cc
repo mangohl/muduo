@@ -30,6 +30,7 @@ EventLoopThreadPool::~EventLoopThreadPool()
   // Don't delete loop, it's stack variable
 }
 
+//启动numThreads_个事件循环
 void EventLoopThreadPool::start(const ThreadInitCallback& cb)
 {
   assert(!started_);

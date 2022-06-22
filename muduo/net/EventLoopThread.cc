@@ -43,8 +43,8 @@ EventLoop* EventLoopThread::startLoop()
 
   EventLoop* loop = NULL;
   {
-    MutexLockGuard lock(mutex_);
-    while (loop_ == NULL)
+    MutexLockGuard lock(mutex_);//调用线程和thread_都会访问loop_，所以加锁
+    while (loop_ == NULL)//thread_会给loop_赋值，但不确定哪个先被cpu调用
     {
       cond_.wait();
     }

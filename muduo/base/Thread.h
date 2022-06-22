@@ -41,8 +41,8 @@ class Thread : noncopyable
 
   bool       started_;
   bool       joined_;
-  pthread_t  pthreadId_;//线程id
-  pid_t      tid_;//进程id
+  pthread_t  pthreadId_;//线程id(由pthread_create创建)
+  pid_t      tid_;//线程唯一id(不同进程中也唯一)
   ThreadFunc func_;//线程执行函数
   string     name_;
   CountDownLatch latch_;

@@ -67,7 +67,7 @@ EventLoop::EventLoop()
     eventHandling_(false),
     callingPendingFunctors_(false),
     iteration_(0),
-    threadId_(CurrentThread::tid()),//当前线程id
+    threadId_(CurrentThread::tid()),//实例化EventLoop时的线程id
     poller_(Poller::newDefaultPoller(this)),//创建轮询器对象
     timerQueue_(new TimerQueue(this)),
     wakeupFd_(createEventfd()),//创建唤醒事件
